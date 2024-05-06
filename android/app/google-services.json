@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "696251934954",
+    "project_id": "online-store-e5224",
+    "storage_bucket": "online-store-e5224.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696251934954:android:4dd073876ffeb2539a0f93",
+        "android_client_info": {
+          "package_name": "com.juliana.online_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7ak0S5SpF9SvxP36xMh5AW5_gGvZuzpo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
