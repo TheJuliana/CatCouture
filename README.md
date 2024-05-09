@@ -1,16 +1,5 @@
-# online_store
+# CatCouture 
+## - online shop with products for cats
 
-online shop with products for cats
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Сurrent application view:
+![image](https://github.com/TheJuliana/CatCouture/assets/62110361/6cc1a580-eaa8-42dc-93e8-bf56e3224dd7)
