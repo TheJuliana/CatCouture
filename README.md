@@ -1,5 +1,4 @@
-# CatCouture 
-## - online shop with products for cats
+## CatCouture - online shop with products for cats
 
 Сurrent application view:
 
