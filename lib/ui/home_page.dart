@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'
-    hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:provider/provider.dart';
-import 'category_page.dart';
 import '../app_state.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -19,22 +15,22 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.search),
           ),
           PopupMenuButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             itemBuilder: (context) => [
               PopupMenuItem(
-                child: Text('Profile'),
+                child: const Text('Profile'),
                 onTap: () {},
               ),
               PopupMenuItem(
-                child: Text('Settings'),
+                child: const Text('Settings'),
                 onTap: () {},
               ),
               PopupMenuItem(
-                child: Text('Cart'),
+                child: const Text('Cart'),
                 onTap: () {},
               ),
               PopupMenuItem(
-                child: Text('Favourite Products'),
+                child: const Text('Favourite Products'),
                 onTap: () {},
               ),
             ],
