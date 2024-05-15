@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/category.dart';
 import '../utils/functions.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 class CategoryListPage extends StatefulWidget {
@@ -86,8 +86,16 @@ class _CategoryListPageState extends State<CategoryListPage> {
                                       if (snapshot.hasData) {
                                         return ClipRRect(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          child: Image.network(snapshot.data!,
-                                              fit: BoxFit.cover),
+                                          child: CachedNetworkImage(
+                                            imageUrl: snapshot.data!,
+                                            placeholder: (context, url) => const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: CircularProgressIndicator(),
+                                            ),
+                                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                                          ),
+                                          /*child: Image.network(snapshot.data!,
+                                              fit: BoxFit.cover),*/
                                         );
                                       } else if (snapshot.hasError) {
                                         return Text('Error: ${snapshot.error}');

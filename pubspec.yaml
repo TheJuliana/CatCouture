@@ -44,6 +44,7 @@ dependencies:
   go_router: ^14.0.2
   universal_image: ^1.0.0
   transparent_image: ^2.0.1
+  cached_network_image: ^3.3.1
 
 
 dev_dependencies:
