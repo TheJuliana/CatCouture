@@ -1,19 +1,22 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:online_store/firebase_options.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart' as ui;
+import 'package:online_store/services/auth_service.dart';
+
 import 'package:online_store/ui/category_list_page.dart';
 
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseUIAuth.configureProviders([
-    EmailAuthProvider(),
+  ui.FirebaseUIAuth.configureProviders([
+    ui.EmailAuthProvider(),
   ]);
   runApp(const MyApp());
 }
@@ -41,18 +44,13 @@ class MyApp extends StatelessWidget {
           titleTextStyle: TextStyle(
             color: Colors.white,
           ),
+          iconTheme: IconThemeData(
+            color: Color.fromRGBO(208, 208, 208, 1.0), // Цвет стрелочки назад
+          ),
         ),
       ),
       home: const MyHomePage(),
     );
-    /* return MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple, // Primary color for buttons, app bar, etc.
-          hintColor: Colors.amber, // Accent color for highlights, etc.
-          brightness: Brightness.light, // Light or dark theme
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), // Custom color scheme
-        ),
-      home: const MyHomePage(),*/
   }
 }
 
@@ -68,9 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = [
     const CategoryListPage(),
-    const Text('Настройки'),
-    const Text('Профиль'),
+    const Text('Корзина'),
+    const AuthGate(),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,97 +114,3 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-/*
-final _router = GoRouter(
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) =>  const CategoryListPage(),
-      routes: [
-        GoRoute(
-          path: 'sign-in',
-          builder: (context, state) {
-            return SignInScreen(
-              actions: [
-                ForgotPasswordAction(((context, email) {
-                  final uri = Uri(
-                    path: '/sign-in/forgot-password',
-                    queryParameters: <String, String?>{
-                      'email': email,
-                    },
-                  );
-                  context.push(uri.toString());
-                })),
-                AuthStateChangeAction(((context, state) {
-                  final user = switch (state) {
-                    SignedIn state => state.user,
-                    UserCreated state => state.credential.user,
-                    _ => null
-                  };
-                  if (user == null) {
-                    return;
-                  }
-                  if (state is UserCreated) {
-                    user.updateDisplayName(user.email!.split('@')[0]);
-                  }
-                  if (!user.emailVerified) {
-                    user.sendEmailVerification();
-                    const snackBar = SnackBar(
-                        content: Text(
-                            'Please check your email to verify your email address'));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                  context.pushReplacement('/');
-                })),
-              ],
-            );
-          },
-          routes: [
-            GoRoute(
-              path: 'forgot-password',
-              builder: (context, state) {
-                final arguments = state.uri.queryParameters;
-                return ForgotPasswordScreen(
-                  email: arguments['email'],
-                  headerMaxExtent: 200,
-                );
-              },
-            ),
-          ],
-        ),
-        GoRoute(
-          path: 'profile',
-          builder: (context, state) {
-            return ProfileScreen(
-              providers: const [],
-              actions: [
-                SignedOutAction((context) {
-                  context.pushReplacement('/');
-                }),
-              ],
-            );
-          },
-        ),
-      ],
-    ),
-  ],
-);
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      routerConfig: _router,
-    );
-  }
-}
-
-*/
