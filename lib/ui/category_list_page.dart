@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/category.dart';
-import '../utils/functions.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
+import '../widgets/category_card.dart';
 
 class CategoryListPage extends StatefulWidget {
   const CategoryListPage({super.key});
@@ -23,8 +21,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   }
 
   void _getNumCategories() async {
-    CollectionReference usersRef =
-        FirebaseFirestore.instance.collection('categories');
+    CollectionReference usersRef = FirebaseFirestore.instance.collection('categories');
     QuerySnapshot querySnapshot = await usersRef.get();
     setState(() {
       _numCategories = querySnapshot.size;
@@ -39,92 +36,48 @@ class _CategoryListPageState extends State<CategoryListPage> {
         title: const Center(child: Text('Categories')),
       ),
       body: SingleChildScrollView(
-        child: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('categories').snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: CircularProgressIndicator(),
-                );
-              } else if (!snapshot.hasData) {
-                return const Text('No data available');
-              }
-              List<Category_products> categories =
-                  snapshot.data!.docs.map((doc) {
-                return Category_products.fromFirestore(
-                    doc as DocumentSnapshot<Map<String, dynamic>>);
-              }).toList();
-
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Wrap(
-                    spacing: 10, // Расстояние между элементами по горизонтали
-                    runSpacing: 10, // Расстояние между строками
-                    children: List.generate(_numCategories, (index) {
-                      return Card(
-                        color: const Color.fromRGBO(255, 249, 249, 1.0),
-                        elevation: 5,
-                        child: InkWell(
-                          splashColor: Colors.blue.withAlpha(30),
-                          onTap: () {
-                            debugPrint('Card tapped.');
-                          },
-                          child: SizedBox(
-                            width: 150,
-                            height: 200,
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.all(10),
-                                  child: FutureBuilder<String>(
-                                    future: getImageUrl(
-                                        categories[index].url_image ?? ''),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          child: CachedNetworkImage(
-                                            imageUrl: snapshot.data!,
-                                            placeholder: (context, url) => const Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: CircularProgressIndicator(),
-                                            ),
-                                            errorWidget: (context, url, error) => const Icon(Icons.error),
-                                          ),
-                                          /*child: Image.network(snapshot.data!,
-                                              fit: BoxFit.cover),*/
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        return const Padding(
-                                          padding: EdgeInsets.all(20.0),
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ),
-                                Flexible(
-                                    child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(categories[index].name),
-                                )),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-              );
-            }),
+        child: CategoryList(numCategories: _numCategories),
       ),
+    );
+  }
+}
+
+class CategoryList extends StatelessWidget {
+  final int numCategories;
+
+  const CategoryList({required this.numCategories});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.all(20.0),
+            child: CircularProgressIndicator(),
+          );
+        } else if (!snapshot.hasData) {
+          return const Text('No data available');
+        }
+
+        List<Category_products> categories = snapshot.data!.docs.map((doc) {
+          return Category_products.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>);
+        }).toList();
+
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: List.generate(numCategories, (index) {
+                return CategoryCard(category: categories[index]);
+              }),
+            ),
+          ),
+        );
+      },
     );
   }
 }
