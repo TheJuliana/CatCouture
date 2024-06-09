@@ -32,7 +32,7 @@ class CategoryCard extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.all(10),
                 child: FutureBuilder<String>(
-                  future: getImageUrl(category.url_image ?? ''),
+                  future: getImageUrl(category.url_image),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ClipRRect(

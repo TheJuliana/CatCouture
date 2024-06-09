@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Category_products {
   String name;
   String url_image;
+
   Category_products({
     required this.name,
     required this.url_image,
@@ -23,5 +24,4 @@ class Category_products {
       "url_image": url_image,
     };
   }
-
 }

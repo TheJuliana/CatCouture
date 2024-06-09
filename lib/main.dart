@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:online_store/firebase_options.dart';
@@ -28,9 +27,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        colorScheme:  ColorScheme.fromSeed(seedColor: const Color.fromRGBO(1, 1, 1, 1)),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.black,
-          selectedItemColor: Color.fromARGB(255, 255, 110, 188),
+          selectedItemColor: Color.fromARGB(255, 255, 158, 207),
           unselectedItemColor: Color.fromARGB(255, 124, 124, 124),
           elevation: 8,
         ),
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = [
     const CategoryListPage(),
-    const Text('Корзина'), //TODO add cart
+    const Text('Cart'), //TODO add cart
     const AuthGate(),
   ];
 

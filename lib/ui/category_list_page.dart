@@ -45,7 +45,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
 class CategoryList extends StatelessWidget {
   final int numCategories;
 
-  const CategoryList({required this.numCategories});
+  const CategoryList({super.key, required this.numCategories});
 
   @override
   Widget build(BuildContext context) {

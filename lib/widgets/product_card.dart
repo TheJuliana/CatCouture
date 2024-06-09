@@ -7,7 +7,7 @@ import '../utils/functions.dart';
 class ProductCard extends StatefulWidget {
   final Product product;
 
-  const ProductCard({required this.product, Key? key}) : super(key: key);
+  const ProductCard({required this.product, super.key});
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -88,7 +88,7 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8.0),
+              Text('${widget.product.price.toString()} \$'),
               if (_quantity == 0)
                 ElevatedButton(
                   onPressed: _incrementQuantity,

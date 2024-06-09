@@ -6,7 +6,7 @@ import '../widgets/product_card.dart'; // Предполагается, что �
 class ProductListPage extends StatelessWidget {
   final String category;
 
-  const ProductListPage({required this.category, Key? key}) : super(key: key);
+  const ProductListPage({required this.category, super.key});
 
   @override
   Widget build(BuildContext context) {
