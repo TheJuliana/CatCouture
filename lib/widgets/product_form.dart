@@ -9,15 +9,16 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 
-
-
 class MyForm extends StatefulWidget {
   const MyForm({super.key});
 
   @override
   _MyFormState createState() => _MyFormState();
 }
+
 class _MyFormState extends State<MyForm> {
+  String? _selectedCategory;
+  List<String> _categories = [];
   final ImagePicker _picker = ImagePicker();
   File? _imageFile;
   Uint8List? _webImageData;
@@ -28,6 +29,21 @@ class _MyFormState extends State<MyForm> {
   num? _quantity;
   String? _category;
   String? _url_image;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    CollectionReference categoriesRef = FirebaseFirestore.instance.collection('categories');
+    QuerySnapshot querySnapshot = await categoriesRef.get();
+    List<String> categories = querySnapshot.docs.map((doc) => doc['name'] as String).toList();
+    setState(() {
+      _categories = categories;
+    });
+  }
 
   Future<void> _getImage() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles();
@@ -40,7 +56,7 @@ class _MyFormState extends State<MyForm> {
         _webImageData = fileBytes;
         _fileName = fileName;
       });
-    }else {
+    } else {
       // User canceled picking file
       print("User canceled file picking.");
     }
@@ -49,10 +65,12 @@ class _MyFormState extends State<MyForm> {
   Future<void> _uploadImage() async {
     if (_fileName != null && _webImageData != null) {
       try {
-        final storageRef = FirebaseStorage.instance.ref().child("products_images/$_fileName");
+        final storageRef =
+            FirebaseStorage.instance.ref().child("products_images/$_fileName");
         final uploadTask = storageRef.putData(
           _webImageData!,
-          SettableMetadata(contentType: 'image/jpeg'), // тип контента "image/jpeg"
+          SettableMetadata(
+              contentType: 'image/jpeg'), // тип контента "image/jpeg"
         );
 
         final TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
@@ -67,14 +85,13 @@ class _MyFormState extends State<MyForm> {
     }
   }
 
-
   Future<void> _uploadProduct() async {
-     await _uploadImage();
+    await _uploadImage();
 
-     if (_url_image == null) {
-       print("Image URL is null, aborting product upload.");
-       return;
-     }
+    if (_url_image == null) {
+      print("Image URL is null, aborting product upload.");
+      return;
+    }
 
     try {
       await FirebaseFirestore.instance.collection('products').add({
@@ -86,8 +103,13 @@ class _MyFormState extends State<MyForm> {
         'category': _category,
       });
       print('Product successful uploaded');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Product successful uploaded'),
+        ),
+      );
     } catch (e) {
-      print ("Error uploading product: $e");
+      print("Error uploading product: $e");
     }
   }
 
@@ -118,10 +140,10 @@ class _MyFormState extends State<MyForm> {
           ),
         ],
       );
-    } else
-      return const Text('Image was not uploaded'); // Placeholder for image
+    } else {
+      return const SizedBox(height: 16); // Placeholder for image
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -161,10 +183,18 @@ class _MyFormState extends State<MyForm> {
             });
           },
         ),
-        TextFormField(
+        DropdownButtonFormField<String>(
+          value: _selectedCategory,
           decoration: const InputDecoration(labelText: 'Category'),
+          items: _categories.map((category) {
+            return DropdownMenuItem<String>(
+              value: category,
+              child: Text(category),
+            );
+          }).toList(),
           onChanged: (value) {
             setState(() {
+              _selectedCategory = value;
               _category = value;
             });
           },
