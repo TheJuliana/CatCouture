@@ -21,6 +21,7 @@ class _MyFormState extends State<MyForm> {
   final ImagePicker _picker = ImagePicker();
   File? _imageFile;
   Uint8List? _webImageData;
+  String? _fileName;
   String? _name;
   String? _description;
   num? _price;
@@ -35,59 +36,90 @@ class _MyFormState extends State<MyForm> {
       final Uint8List fileBytes = result.files.single.bytes!;
       final fileName = result.files.single.name;
 
-      // Upload file to Firebase Storage
-      try {
-        final storageRef = FirebaseStorage.instance.ref().child("products_images/$fileName");
-        final uploadTask = storageRef.putData(
-          fileBytes,
-          SettableMetadata(contentType: 'image/jpeg'), // тип контента "image/jpeg"
-        );
-
-
-        uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) async {
-          switch (taskSnapshot.state) {
-            case TaskState.running:
-              final progress = 100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-              print("Upload is $progress% complete.");
-              break;
-            case TaskState.paused:
-              print("Upload is paused.");
-              break;
-            case TaskState.canceled:
-              print("Upload was canceled");
-              break;
-            case TaskState.error:
-              print("Error during upload: ${TaskState.error}");
-              break;
-            case TaskState.success:
-              print("Upload complete.");
-              final String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-              _url_image = downloadUrl;
-              print("Download URL: $downloadUrl");
-
-              try {
-                await FirebaseFirestore.instance.collection('products').add({
-                  'name': _name,
-                  'description': _description,
-                  'url_photo': downloadUrl,
-                  'price': _price,
-                  'quantity': _quantity,
-                  'category': _category,
-                });
-              } catch (e) {
-                print ("Error uploading product: $e");
-              }
-
-              break;
-          }
-        });
-      } catch (e) {
-        print("Error uploading file: $e");
-      }
-    } else {
+      setState(() {
+        _webImageData = fileBytes;
+        _fileName = fileName;
+      });
+    }else {
       // User canceled picking file
       print("User canceled file picking.");
     }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_fileName != null && _webImageData != null) {
+      try {
+        final storageRef = FirebaseStorage.instance.ref().child("products_images/$_fileName");
+        final uploadTask = storageRef.putData(
+          _webImageData!,
+          SettableMetadata(contentType: 'image/jpeg'), // тип контента "image/jpeg"
+        );
+
+        final TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
+        final String downloadUrl = await snapshot.ref.getDownloadURL();
+        setState(() {
+          _url_image = downloadUrl;
+        });
+        print("Download URL: $downloadUrl");
+      } catch (e) {
+        print("Error uploading file: $e");
+      }
+    }
+  }
+
+
+  Future<void> _uploadProduct() async {
+     await _uploadImage();
+
+     if (_url_image == null) {
+       print("Image URL is null, aborting product upload.");
+       return;
+     }
+
+    try {
+      await FirebaseFirestore.instance.collection('products').add({
+        'name': _name,
+        'description': _description,
+        'url_photo': _url_image,
+        'price': _price,
+        'quantity': _quantity,
+        'category': _category,
+      });
+      print('Product successful uploaded');
+    } catch (e) {
+      print ("Error uploading product: $e");
+    }
+  }
+
+  Widget _buildImageWidget() {
+    if (_webImageData != null) {
+      return Column(
+        children: [
+          const Text('Selected image:'),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.memory(
+                _webImageData!,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+              IconButton(
+                icon: const Icon(Icons.close), // Иконка крестика
+                onPressed: () {
+                  setState(() {
+                    _webImageData = null; // Удаляем изображение
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      );
+    } else
+      return const Text('Image was not uploaded'); // Placeholder for image
   }
 
 
@@ -137,49 +169,16 @@ class _MyFormState extends State<MyForm> {
             });
           },
         ),
-        const SizedBox(height: 16),
-        if (_url_image != null)
-          Column(
-            children: [
-              const Text('Selected image:'),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.network(
-                    _url_image!,
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close), // Иконка крестика
-                    onPressed: () {
-                      setState(() {
-                        _url_image = null; // Удаляем изображение
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ],
-          )
-        else
-          const SizedBox(height: 100, width: 100), // Placeholder for image
-        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: _getImage,
-          child: const Text('Pick image & Upload product'),
+          child: const Text('Pick image'),
+        ),
+        const SizedBox(height: 16),
+        _buildImageWidget(),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: _uploadProduct,
+          child: const Text('Upload product'),
         ),
       ],
     );
