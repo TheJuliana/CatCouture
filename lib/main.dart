@@ -9,6 +9,8 @@ import 'package:online_store/services/auth_service.dart';
 import 'package:online_store/services/cart_service.dart';
 import 'package:online_store/ui/cart_page.dart';
 import 'package:online_store/ui/category_list_page.dart';
+import 'package:provider/provider.dart';
+import '../services/cart_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -134,13 +136,40 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.black,
         currentIndex: _currentIndex,
         onTap: _onTap,
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Stack(
+              children: <Widget>[
+                Icon(Icons.shopping_cart),
+                if (Provider.of<CartProvider>(context).getTotalItems() > 0)
+                  Positioned(
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 12,
+                        minHeight: 12,
+                      ),
+                      child: Text(
+                        '${Provider.of<CartProvider>(context).getTotalItems()}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
