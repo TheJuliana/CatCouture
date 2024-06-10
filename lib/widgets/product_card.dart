@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../services/cart_service.dart';
 import '../ui/product_detail_page.dart';
 import '../utils/functions.dart';
+
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -15,7 +16,9 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
 
-    final isInCart = cartProvider.cartItems.containsKey(product.id);
+    final isInCart = cartProvider.cartItems.containsKey(product);
+
+    final quantity = cartProvider.cartItems[product] ?? 0;
 
     return Card(
       color: const Color.fromRGBO(255, 249, 249, 1.0),
@@ -77,7 +80,7 @@ class ProductCard extends StatelessWidget {
               if (!isInCart)
                 ElevatedButton(
                   onPressed: () {
-                    cartProvider.addToCart(product.id);
+                    cartProvider.addToCart(product);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(248, 248, 248, 1.0),
@@ -102,14 +105,14 @@ class ProductCard extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.remove),
                       onPressed: () {
-                        cartProvider.removeFromCart(product.id);
+                        cartProvider.removeFromCart(product);
                       },
                     ),
-                    Text('${cartProvider.cartItems[product.id]}'),
+                    Text('$quantity'), // Отображаем количество товаров
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () {
-                        cartProvider.addToCart(product.id);
+                        cartProvider.addToCart(product);
                       },
                     ),
                   ],
@@ -121,4 +124,3 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
-

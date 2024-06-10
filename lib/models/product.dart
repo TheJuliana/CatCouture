@@ -44,6 +44,14 @@ class Product {
     };
   }
 
-
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
+    final Product otherProduct = other as Product;
+    return id == otherProduct.id;
   }
 
+  @override
+  int get hashCode => id.hashCode;
+}

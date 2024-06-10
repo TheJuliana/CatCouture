@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/product.dart';
 import '../services/cart_service.dart';
 
 class CartPage extends StatelessWidget {
@@ -10,25 +11,67 @@ class CartPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Корзина'),
+        title: Text('Cart'),
       ),
-      body: ListView.builder(
-        itemCount: cartItems.length,
-        itemBuilder: (context, index) {
-          final productId = cartItems.keys.toList()[index];
-          final quantity = cartItems[productId];
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                final product = cartItems.keys.elementAt(index);
+                final quantity = cartItems[product];
 
-          return ListTile(
-            title: Text('Товар ID: $productId'),
-            subtitle: Text('Количество: $quantity'),
-            trailing: IconButton(
-              icon: Icon(Icons.remove_shopping_cart),
-              onPressed: () {
-                cartProvider.removeFromCart(productId);
+                return ListTile(
+                  title: Text(product.name ?? 'Unknown'),
+                  subtitle: Text('Price: \$${product.price ?? 0} x $quantity'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.remove),
+                        onPressed: () {
+                          cartProvider.removeFromCart(product);
+                        },
+                      ),
+                      Text('$quantity'),
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          cartProvider.addToCart(product);
+                        },
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
-          );
-        },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Total Items: ${cartProvider.getTotalItems()}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Total Price: \$${cartProvider.getTotalPrice(cartItems.keys.toList())}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Реализуйте здесь логику для оформления заказа
+                  },
+                  child: Text('Checkout'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
