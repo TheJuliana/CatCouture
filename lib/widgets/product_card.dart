@@ -10,7 +10,7 @@ import '../utils/functions.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
 
-  const ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class ProductCard extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           ),
                           errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
+                              const Icon(Icons.error),
                         ),
                       );
                     } else if (snapshot.hasError) {

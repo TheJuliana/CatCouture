@@ -7,7 +7,7 @@ import '../utils/functions.dart';
 class ProductDetailPage extends StatelessWidget {
   final Product product;
 
-  const ProductDetailPage({Key? key, required this.product}) : super(key: key);
+  const ProductDetailPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class ProductDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
-                    Text(product.name!, style: TextStyle(fontSize: 20)),
+                    Text(product.name!, style: const TextStyle(fontSize: 20)),
                     const Divider(),
                     Text(product.description ?? ''),
                     Text('${product.price.toString()} \$'),
@@ -83,8 +83,8 @@ class ProductDetailPage extends StatelessWidget {
         onPressed: () {
           // Здесь добавьте логику добавления товара в корзину и обработку количества товаров
         },
-        label: Text('Add to cart'),
-        icon: Icon(Icons.shopping_cart),
+        label: const Text('Add to cart'),
+        icon: const Icon(Icons.shopping_cart),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

@@ -24,7 +24,7 @@ void main() async {
 StreamController<bool> isLightTheme = StreamController();
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = [
     const CategoryListPage(),
-    CartPage(),
+    const CartPage(),
     const AuthGate(),
   ];
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/product.dart';
 
 class CartProvider extends ChangeNotifier {
-  Map<Product, int> _cartItems = {}; // Используем Map
+  final Map<Product, int> _cartItems = {}; // Используем Map
 
   Map<Product, int> get cartItems => _cartItems;
 
