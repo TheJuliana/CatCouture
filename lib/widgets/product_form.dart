@@ -3,9 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 
@@ -19,8 +16,6 @@ class MyForm extends StatefulWidget {
 class _MyFormState extends State<MyForm> {
   String? _selectedCategory;
   List<String> _categories = [];
-  final ImagePicker _picker = ImagePicker();
-  File? _imageFile;
   Uint8List? _webImageData;
   String? _fileName;
   String? _name;
@@ -141,7 +136,7 @@ class _MyFormState extends State<MyForm> {
         ],
       );
     } else {
-      return const SizedBox(height: 16); // Placeholder for image
+      return const SizedBox(height: 16);
     }
   }
 

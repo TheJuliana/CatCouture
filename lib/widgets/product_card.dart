@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/product.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../ui/product_detail_page.dart';
 import '../utils/functions.dart';
 
 class ProductCard extends StatefulWidget {
@@ -38,12 +39,12 @@ class _ProductCardState extends State<ProductCard> {
       child: InkWell(
         splashColor: Colors.blue.withAlpha(30),
         onTap: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => ProductListPage(category: category.name),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailPage(product: widget.product),
+            ),
+          );
         },
         child: SizedBox(
           width: 150,
