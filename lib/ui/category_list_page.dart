@@ -32,7 +32,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 110, 188),
+        backgroundColor: const Color.fromARGB(255, 255, 158, 187),
         title: const Center(child: Text('Categories')),
       ),
       body: SingleChildScrollView(

@@ -9,8 +9,6 @@ import 'package:online_store/services/auth_service.dart';
 import 'package:online_store/services/cart_service.dart';
 import 'package:online_store/ui/cart_page.dart';
 import 'package:online_store/ui/category_list_page.dart';
-import 'package:provider/provider.dart';
-import '../services/cart_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +39,7 @@ class MyApp extends StatelessWidget {
               ColorScheme.fromSeed(seedColor: const Color.fromRGBO(1, 1, 1, 1)),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             backgroundColor: Colors.black,
-            selectedItemColor: Color.fromARGB(255, 255, 158, 207),
+            selectedItemColor: Color.fromARGB(255, 255, 158, 187),
             unselectedItemColor: Color.fromARGB(255, 124, 124, 124),
             elevation: 8,
           ),
@@ -137,14 +135,14 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _currentIndex,
         onTap: _onTap,
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Stack(
               children: <Widget>[
-                Icon(Icons.shopping_cart),
+                const Icon(Icons.shopping_cart),
                 if (Provider.of<CartProvider>(context).getTotalItems() > 0)
                   Positioned(
                     right: 0,
@@ -154,13 +152,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minWidth: 12,
                         minHeight: 12,
                       ),
                       child: Text(
                         '${Provider.of<CartProvider>(context).getTotalItems()}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 8,
                         ),
