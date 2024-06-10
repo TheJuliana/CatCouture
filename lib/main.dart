@@ -1,9 +1,13 @@
 import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:online_store/firebase_options.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as ui;
 import 'package:online_store/services/auth_service.dart';
+import 'package:online_store/services/cart_service.dart';
+import 'package:online_store/ui/cart_page.dart';
 import 'package:online_store/ui/category_list_page.dart';
 
 void main() async {
@@ -20,31 +24,37 @@ void main() async {
 StreamController<bool> isLightTheme = StreamController();
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme:  ColorScheme.fromSeed(seedColor: const Color.fromRGBO(1, 1, 1, 1)),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.black,
-          selectedItemColor: Color.fromARGB(255, 255, 158, 207),
-          unselectedItemColor: Color.fromARGB(255, 124, 124, 124),
-          elevation: 8,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
-          titleTextStyle: TextStyle(
-            color: Colors.white,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: const Color.fromRGBO(1, 1, 1, 1)),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Colors.black,
+            selectedItemColor: Color.fromARGB(255, 255, 158, 207),
+            unselectedItemColor: Color.fromARGB(255, 124, 124, 124),
+            elevation: 8,
           ),
-          iconTheme: IconThemeData(
-            color: Color.fromRGBO(208, 208, 208, 1.0),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+            titleTextStyle: TextStyle(
+              color: Colors.white,
+            ),
+            iconTheme: IconThemeData(
+              color: Color.fromRGBO(208, 208, 208, 1.0),
+            ),
           ),
         ),
+        home: const MyHomePage(),
       ),
-      home: const MyHomePage(),
     );
   }
 }
@@ -61,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = [
     const CategoryListPage(),
-    const Text('Cart'), //TODO add cart
+    CartPage(),
     const AuthGate(),
   ];
 
@@ -115,7 +125,8 @@ class _MyHomePageState extends State<MyHomePage> {
         index: _currentIndex,
         children: _pages
             .asMap()
-            .map((index, page) => MapEntry(index, _buildOffstageNavigator(index)))
+            .map((index, page) =>
+                MapEntry(index, _buildOffstageNavigator(index)))
             .values
             .toList(),
       ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Product {
+  final String id;
   final String? name;
   final String? description;
   final String? url_image;
@@ -9,6 +10,7 @@ class Product {
   final String? category;
 
   Product({
+    required this.id,
     this.name,
     this.description,
     this.url_image,
@@ -21,6 +23,7 @@ class Product {
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data();
     return Product(
+      id: snapshot.id,
       name: data?['name'],
       description: data?['description'] ?? 'null description',
       url_image: data?['url_photo'] ?? '',
@@ -40,4 +43,7 @@ class Product {
       if (category != null) "category": category,
     };
   }
-}
+
+
+  }
+

@@ -1,38 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../services/cart_service.dart';
 import '../ui/product_detail_page.dart';
 import '../utils/functions.dart';
-
-class ProductCard extends StatefulWidget {
+class ProductCard extends StatelessWidget {
   final Product product;
 
-  const ProductCard({required this.product, super.key});
-
-  @override
-  _ProductCardState createState() => _ProductCardState();
-}
-
-class _ProductCardState extends State<ProductCard> {
-  int _quantity = 0;
-
-  void _incrementQuantity() {
-    setState(() {
-      _quantity++;
-    });
-  }
-
-  void _decrementQuantity() {
-    setState(() {
-      if (_quantity > 0) {
-        _quantity--;
-      }
-    });
-  }
+  const ProductCard({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+
+    final isInCart = cartProvider.cartItems.containsKey(product.id);
+
     return Card(
       color: const Color.fromRGBO(255, 249, 249, 1.0),
       elevation: 5,
@@ -42,7 +26,7 @@ class _ProductCardState extends State<ProductCard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ProductDetailPage(product: widget.product),
+              builder: (context) => ProductDetailPage(product: product),
             ),
           );
         },
@@ -54,7 +38,7 @@ class _ProductCardState extends State<ProductCard> {
               Container(
                 margin: const EdgeInsets.all(10),
                 child: FutureBuilder<String>(
-                  future: getImageUrl(widget.product.url_image ?? ''),
+                  future: getImageUrl(product.url_image ?? ''),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ClipRRect(
@@ -66,7 +50,7 @@ class _ProductCardState extends State<ProductCard> {
                             child: CircularProgressIndicator(),
                           ),
                           errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                          const Icon(Icons.error),
                         ),
                       );
                     } else if (snapshot.hasError) {
@@ -84,26 +68,26 @@ class _ProductCardState extends State<ProductCard> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    widget.product.name ?? 'product name is unknown',
+                    product.name ?? 'product name is unknown',
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              Text('${widget.product.price.toString()} \$'),
-              if (_quantity == 0)
+              Text('${product.price.toString()} \$'),
+              if (!isInCart)
                 ElevatedButton(
-                  onPressed: _incrementQuantity,
+                  onPressed: () {
+                    cartProvider.addToCart(product.id);
+                  },
                   style: ElevatedButton.styleFrom(
-                    //foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromRGBO(
-                        248, 248, 248, 1.0), // Цвет текста кнопки
-                    elevation: 5, // Высота тени кнопки
+                    backgroundColor: const Color.fromRGBO(248, 248, 248, 1.0),
+                    elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
-                      // Закругление углов
                       side: const BorderSide(
-                          color: Color.fromRGBO(73, 73, 73, 1.0),
-                          width: 0.7), // Цвет и толщина рамки
+                        color: Color.fromRGBO(73, 73, 73, 1.0),
+                        width: 0.7,
+                      ),
                     ),
                   ),
                   child: const Text(
@@ -117,12 +101,16 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove),
-                      onPressed: _decrementQuantity,
+                      onPressed: () {
+                        cartProvider.removeFromCart(product.id);
+                      },
                     ),
-                    Text('$_quantity'),
+                    Text('${cartProvider.cartItems[product.id]}'),
                     IconButton(
                       icon: const Icon(Icons.add),
-                      onPressed: _incrementQuantity,
+                      onPressed: () {
+                        cartProvider.addToCart(product.id);
+                      },
                     ),
                   ],
                 ),
@@ -133,3 +121,4 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 }
+
